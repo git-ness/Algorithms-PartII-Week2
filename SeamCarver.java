@@ -13,19 +13,18 @@ public class SeamCarver {
         pic = new Picture(picture);
         double[][] energyArray = new double[pic.width()][pic.height()];
 
+        // Start with the lowest energy of the second... index 1 array.
+        // Square the amounts only when needed
+        //TODO: How is getRGB supposed to be used when it returns a neg int?
 
         for (int i = 0; i < pic.width(); i++) {
             for (int j = 0; j < pic.height(); j++) {
-//                System.out.println(pic.get(i,j).getRGB());
 
                 energyArray[i][j] = energy(i,j);
 
-                // Start with the lowest energy of the second... index 1 array. 
-
             }
         }
-
-
+        
 
 //        Topological topologicalWidth = new Topological(digraphWidth);
 
