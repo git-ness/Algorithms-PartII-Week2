@@ -6,7 +6,6 @@ public class SeamCarver {
     private Picture pic;
     private double[][] energyArray;
     Digraph verticalDigraph;
-    Digraph horizontalDigraph;
 
     // mutable is a deep copy
     // imutable is a final var
@@ -17,27 +16,18 @@ public class SeamCarver {
         this.energyArray = new double[pic.width()][pic.height()];
         this.verticalDigraph = new Digraph(height()*width());
 
-
-        // Start with the lowest energy of the second... index 1 array.
-        // Square the amounts only when needed?
-
         createVerticalDigraph();
-        createHorizontalDigraph();
 
         Topological topological = new Topological(verticalDigraph);
         Iterable<Integer> topOrder = topological.order();
         Iterator<Integer> iterator = topOrder.iterator();
         iterator.hasNext();
 
-        TopologicalX topologicalX = new TopologicalX(verticalDigraph);
-        Iterable<Integer> topxOrder = topologicalX.order();
-        Iterator<Integer> iteratorx = topxOrder.iterator();
-        iteratorx.hasNext();
+        
+
+
     }
 
-    private void createHorizontalDigraph() {
-        //TODO
-    }
 
     private void createVerticalDigraph() {
         int vertex = 0;
@@ -123,15 +113,12 @@ public class SeamCarver {
         // Find the lowest pixel on the second row
         int lowestVertIndex = 0;
         for (int i = 0; i < energyArray.length; i++) {
-            double lowerCanidate = energyArray[1][i];
+            double lowerCandidate = energyArray[1][i];
             double lowest = 0.0;
-            if (lowest > lowerCanidate ) {
+            if (lowest > lowerCandidate ) {
                 lowestVertIndex = i;
             }
         }
-
-
-
 
 
         return null;
