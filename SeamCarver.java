@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.*;
 import java.awt.*;
+import java.util.Iterator;
 
 public class SeamCarver {
     private Picture pic;
@@ -25,7 +26,13 @@ public class SeamCarver {
 
         Topological topological = new Topological(verticalDigraph);
         Iterable<Integer> topOrder = topological.order();
-        int pc = 0;
+        Iterator<Integer> iterator = topOrder.iterator();
+        iterator.hasNext();
+
+        TopologicalX topologicalX = new TopologicalX(verticalDigraph);
+        Iterable<Integer> topxOrder = topologicalX.order();
+        Iterator<Integer> iteratorx = topxOrder.iterator();
+        iteratorx.hasNext();
     }
 
     private void createHorizontalDigraph() {
