@@ -1,11 +1,9 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.Picture;
 import java.awt.*;
-import java.util.Iterator;
 
 public class SeamCarver {
     private Picture pic;
     private double[][] energyArray;
-    Digraph verticalDigraph;
 
     // mutable is a deep copy
     // imutable is a final var
@@ -14,52 +12,91 @@ public class SeamCarver {
     public SeamCarver(Picture picture) {                    // create a seam carver object based on the given picture
         pic = new Picture(picture);
         this.energyArray = new double[pic.width()][pic.height()];
-        this.verticalDigraph = new Digraph(height()*width());
 
-        createVerticalDigraph();
+        createEnergyArray();
 
-        Topological topological = new Topological(verticalDigraph);
-        Iterable<Integer> topOrder = topological.order();
-        Iterator<Integer> iterator = topOrder.iterator();
-        iterator.hasNext();
 
-        
-
+//        // Find the lowest pixel on the second row
+//        int lowestVertIndex = 0;
+//        int lowestVertIndexSecondRow = 0;
+//        double lowest = 0.0;
+//
+//        for (int i = 0; i < energyArray.length; i++) {
+//            double firstRowCandidate = energyArray[1][i];
+//            double secondRowCandidate = energyArray[2][i];
+//
+//            if (lowest > firstRowCandidate) {
+//                lowestVertIndex = i;
+//            }
+//            if (lowestVertIndexSecondRow > )
+//
+//        }
 
     }
 
+    // Loop through each node at the top, go down three rows to determine the shorted past first. Once I know
+    // which one it is, then I could then plug that into the Topological sort library and have it start from there.
+    // Once it starts from there, I use the topological sort from each node...but hmm weights are different than the graph.
 
-    private void createVerticalDigraph() {
-        int vertex = 0;
 
+
+
+    private void createEnergyArray() {
         for (int x = 0; x < pic.width(); x++) {
+
             for (int y = 0; y < pic.height(); y++) {
 
                 energyArray[x][y] = energy(x, y);
 
-                // Adds edges on
-                if (vertex % width() == 0 && vertex + width() < width()*height()) {
-                    verticalDigraph.addEdge(vertex, vertex + width()+1);
-                    verticalDigraph.addEdge(vertex, vertex + width());
-                    vertex++;
-                }
 
-                if ((vertex + 1) % width() == 0 && vertex + width() < width()*height()) {
-                    verticalDigraph.addEdge(vertex, vertex + width()-1);
-                    verticalDigraph.addEdge(vertex, vertex+width());
-
-                    vertex++;
-                }
-
-                if ((y != 0 && y != width() - 1) && vertex + width() < width()*height()) {
-                    verticalDigraph.addEdge(vertex, vertex + width()+1);
-                    verticalDigraph.addEdge(vertex, vertex + width()-1);
-                    verticalDigraph.addEdge(vertex, vertex + width());
-                    vertex++;
-
-                }
             }
+
         }
+    }
+
+    private int[] findVerticalSeamFrom(int x) {
+
+        int y = 0;
+        int[] seamArray = new int[height()];
+
+
+        seamArray[0] = x;
+
+        double lowerBelowLeft = energyArray[x-1][y+1];
+        double below = energyArray[x][y+1];
+        double lowerBelowRight = energyArray[x+1][y+1];
+
+        // lowerBelowRight is the lowest
+        if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
+            // Add the value of x to seamArray[0+1]
+            seamArray[1] = x+1;
+        }
+
+        // below is the lowest
+        else if (below < lowerBelowLeft && below < lowerBelowLeft) {
+            seamArray[1] = x;
+
+        }
+
+        // lowerBelowLeft is the lowest
+        else {
+            seamArray[1] = x-1;
+        }
+
+        // for loop and keep traversing the seam.
+        // account for left/right cases
+
+        for (int i = 2; i < seamArray.length; i++) {
+            lowerBelowLeft = energyArray[x-1][y+1];
+            below = energyArray[x][y+1];
+            lowerBelowRight = energyArray[x+1][y+1];
+
+
+
+            seamArray[i] =
+        }
+
+        return seamArray;
     }
 
     public Picture picture() {                              // current picture
@@ -79,6 +116,7 @@ public class SeamCarver {
     private int deltaHorizontal(int x, int y) {
         Color right = pic.get(x + 1, y);
         Color left = pic.get(x - 1, y);
+
 
         int deltaRed = ((right.getRed() - left.getRed())) * ((right.getRed() - left.getRed()));
         int deltaGreen = (right.getGreen() - left.getGreen()) * (right.getGreen() - left.getGreen());
@@ -104,21 +142,11 @@ public class SeamCarver {
             return 1000;
         }
 
-        return Math.sqrt(deltaHorizontal(x, y) + deltaVertical(x,y));
+        return Math.sqrt(deltaHorizontal(x, y) + deltaVertical(x, y));
     }
 
 
     public int[] findVerticalSeam() {                // sequence of indices for vertical seam
-
-        // Find the lowest pixel on the second row
-        int lowestVertIndex = 0;
-        for (int i = 0; i < energyArray.length; i++) {
-            double lowerCandidate = energyArray[1][i];
-            double lowest = 0.0;
-            if (lowest > lowerCandidate ) {
-                lowestVertIndex = i;
-            }
-        }
 
 
         return null;
@@ -139,11 +167,11 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/3x4.png");
+        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/6x5.png");
 
         SeamCarver seamCarver = new SeamCarver(picture);
-        assert seamCarver.energy(0, 0) == 1000;
-        assert seamCarver.energy(1, 2) == Math.sqrt(52024);
+//        assert seamCarver.energy(0, 0) == 1000;
+//        assert seamCarver.energy(1, 2) == Math.sqrt(52024);
 
     }
 }
