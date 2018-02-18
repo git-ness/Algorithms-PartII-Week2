@@ -5,6 +5,7 @@ import java.awt.*;
 public class SeamCarver {
     private Picture pic;
     private final double[][] energyArray;
+    private int[] verticalSeamArray;
 
     // mutable is a deep copy
     // imutable is a final var
@@ -26,44 +27,72 @@ public class SeamCarver {
     private SeamEnergy findVerticalSeamFrom(int x) {
 
         int y = 0;
-        int[] seamArray = new int[height()];
+        verticalSeamArray = new int[height()];
 
-        seamArray[0] = x;
 
-        double lowerBelowLeft = energyArray[x - 1][y + 1];
-        double below = energyArray[x][y + 1];
-        double lowerBelowRight = energyArray[x + 1][y + 1];
+        verticalSeamArray[0] = x;
+        double lowerBelowLeft = 0;
+        double below = 0;
+        double lowerBelowRight = 0;
+
+        if (x != 0 && x != width()-1) {
+            lowerBelowLeft = energyArray[x - 1][y + 1];
+            below = energyArray[x][y + 1];
+            lowerBelowRight = energyArray[x + 1][y + 1];
+        }
+
+        else if (x == 0) {
+            below = energyArray[x][y + 1];
+            lowerBelowRight = energyArray[x + 1][y + 1];
+        }
+
+        else {
+            below = energyArray[x][y + 1];
+            lowerBelowRight = energyArray[x + 1][y + 1];
+        }
 
         // lowerBelowRight is the lowest
         if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
             // Add the value of x to seamArray[0+1]
-            seamArray[1] = x + 1;
+            verticalSeamArray[1] = x + 1;
             y++;
         }
 
         // below is the lowest
         else if (below < lowerBelowLeft && below < lowerBelowLeft) {
-            seamArray[1] = x;
+            verticalSeamArray[1] = x;
             y++;
 
         }
 
         // lowerBelowLeft is the lowest
         else {
-            seamArray[1] = x - 1;
+            verticalSeamArray[1] = x - 1;
             y++;
         }
 
         // for loop and keep traversing the seam.
         // account for left/right cases
 
-        for (int i = 2; i < seamArray.length; i++) {
-            int newX = seamArray[i - 1];
+        for (int i = 2; i < verticalSeamArray.length; i++) {
+            int newX = verticalSeamArray[i - 1];
             int newY = y;
 
-            lowerBelowLeft = energyArray[newX - 1][newY + 1];
-            below = energyArray[newX][newY + 1];
-            lowerBelowRight = energyArray[newX + 1][newY + 1];
+            if (x != 0 && x != width()-1) {
+                lowerBelowLeft = energyArray[x - 1][y + 1];
+                below = energyArray[x][y + 1];
+                lowerBelowRight = energyArray[x + 1][y + 1];
+            }
+
+            else if (x == 0) {
+                below = energyArray[x][y + 1];
+                lowerBelowRight = energyArray[x + 1][y + 1];
+            }
+
+            else {
+                below = energyArray[x][y + 1];
+                lowerBelowRight = energyArray[x + 1][y + 1];
+            }
 
             // check to ensure energyArray is not on the left or right edges
             if (lowerBelowLeft == 1000 || lowerBelowRight == 1000) {
@@ -72,22 +101,22 @@ public class SeamCarver {
                 if (lowerBelowLeft == 1000) {
 
                     if (lowerBelowRight < below) {
-                        seamArray[i] = newX - 1;
+                        verticalSeamArray[i] = newX - 1;
                         y++;
                         continue;
                     } else {
-                        seamArray[i] = newX;
+                        verticalSeamArray[i] = newX;
                         y++;
                         continue;
                     }
 
                 } else {
                     if (lowerBelowLeft < below) { // lowerBelowRight is 1000, so we compare below and lowerBelowLeft
-                        seamArray[i] = newX - 1;
+                        verticalSeamArray[i] = newX - 1;
                         y++;
                         continue;
                     } else {
-                        seamArray[i] = newX;
+                        verticalSeamArray[i] = newX;
                         y++;
                         continue;
                     }
@@ -96,35 +125,30 @@ public class SeamCarver {
 
             // lowerBelowRight is the lowest
             if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
-                seamArray[i] = newX + 1;
+                verticalSeamArray[i] = newX + 1;
                 newY++;
                 continue;
             }
 
             // below is lowest
             else if (below < lowerBelowLeft && below < lowerBelowRight) {
-                seamArray[i] = newX;
+                verticalSeamArray[i] = newX;
                 newY++;
                 continue;
             }
 
             // lowerBelowLeft is the lowest
             else {
-                seamArray[i] = newX - 1;
+                verticalSeamArray[i] = newX - 1;
                 newY++;
                 continue;
             }
         }
 
         SeamEnergy se = new SeamEnergy();
-        se.seam = seamArray;
+        se.seam = verticalSeamArray;
         //TODO: Calculate to total energy so we can find the lowest energy from the seams.
         return se;
-    }
-
-    public Picture picture() {                              // current picture
-
-        return new Picture(pic);
     }
 
     public int width() {                                    // width of current picture
@@ -171,10 +195,9 @@ public class SeamCarver {
         // Find lowest energy on second row and use the row right above it as the first location
 
         double lowestCandidate = Double.MAX_VALUE;
-        int arrayCandidateIndex = 0;
+        int[] arraySeam = null;
 
-        // TODO: Upgrade functionality to include top as part of for loop
-        for (int i = 0; i < width(); i++) {
+        for (int i = 1; i < width()-1; i++) {
             double energyValue = findVerticalSeamFrom(i).energy;
             if (energyValue < lowestCandidate) {
                 lowestCandidate = energyValue;
@@ -183,10 +206,9 @@ public class SeamCarver {
             }
         }
         return arraySeam;
-
     }
 
-    public static class SeamEnergy {
+    public class SeamEnergy {
         double energy;
         int[] seam;
     }
@@ -212,6 +234,11 @@ public class SeamCarver {
                 energyArray[col][row] = pixelSwap;
             }
         } // TODO: The above ^ doesn't take into account the new deltas that need to be calculated after the seem is removed.
+    }
+
+    public Picture picture() {                              // current picture
+
+        return new Picture(pic);
     }
 
     public static void main(String[] args) {
