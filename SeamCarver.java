@@ -1,11 +1,13 @@
 import edu.princeton.cs.algs4.Picture;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class SeamCarver {
     private Picture pic;
     private final double[][] energyArray;
     private int[] verticalSeamArray;
+    ArrayList<int[]> verticalSeamsToRemoveList = new ArrayList<>();
 
     // mutable is a deep copy
     // imutable is a final var
@@ -24,31 +26,26 @@ public class SeamCarver {
         }
     }
 
-    private SeamEnergy findVerticalSeamFrom(int x) {
+    private CalculateSeamEnergy findVerticalSeamFrom(int x) {
 
         int y = 0;
         verticalSeamArray = new int[height()];
 
-
         verticalSeamArray[0] = x;
-        double lowerBelowLeft = 0;
-        double below = 0;
-        double lowerBelowRight = 0;
+        double lowerBelowLeft = Double.POSITIVE_INFINITY;
+        double below = Double.POSITIVE_INFINITY;
+        double lowerBelowRight = Double.POSITIVE_INFINITY;
 
-        if (x != 0 && x != width()-1) {
+        if (x != 0 && x != width() - 1) {
             lowerBelowLeft = energyArray[x - 1][y + 1];
             below = energyArray[x][y + 1];
             lowerBelowRight = energyArray[x + 1][y + 1];
-        }
-
-        else if (x == 0) {
+        } else if (x == 0) {
             below = energyArray[x][y + 1];
             lowerBelowRight = energyArray[x + 1][y + 1];
-        }
-
-        else {
+        } else {
             below = energyArray[x][y + 1];
-            lowerBelowRight = energyArray[x + 1][y + 1];
+            lowerBelowLeft = energyArray[x - 1][y + 1];
         }
 
         // lowerBelowRight is the lowest
@@ -78,20 +75,16 @@ public class SeamCarver {
             int newX = verticalSeamArray[i - 1];
             int newY = y;
 
-            if (x != 0 && x != width()-1) {
+            if (x != 0 && x != width() - 1) {
                 lowerBelowLeft = energyArray[x - 1][y + 1];
                 below = energyArray[x][y + 1];
                 lowerBelowRight = energyArray[x + 1][y + 1];
-            }
-
-            else if (x == 0) {
+            } else if (x == 0) {
                 below = energyArray[x][y + 1];
                 lowerBelowRight = energyArray[x + 1][y + 1];
-            }
-
-            else {
+            } else {
                 below = energyArray[x][y + 1];
-                lowerBelowRight = energyArray[x + 1][y + 1];
+                lowerBelowRight = energyArray[x - 1][y + 1];
             }
 
             // check to ensure energyArray is not on the left or right edges
@@ -145,9 +138,10 @@ public class SeamCarver {
             }
         }
 
-        SeamEnergy se = new SeamEnergy();
-        se.seam = verticalSeamArray;
-        //TODO: Calculate to total energy so we can find the lowest energy from the seams.
+        CalculateSeamEnergy se = new CalculateSeamEnergy(verticalSeamArray);
+
+        // Calculates the total energy so we can find the lowest energy from the seams.
+
         return se;
     }
 
@@ -158,6 +152,157 @@ public class SeamCarver {
     public int height() {                                   // height of current picture
         return pic.height();
     }
+
+
+    public double energy(int x, int y) {               // energy of pixel at column x and row y
+
+        if (x == 0 || y == 0 || x == width() - 1 || y == height() - 1) {
+            return 1000;
+        }
+
+        return Math.sqrt(deltaHorizontal(x, y) + deltaVertical(x, y));
+    }
+
+
+    public int[] findVerticalSeam() {                // sequence of indices for vertical seam
+        // Find lowest energy on second row and use the row right above it as the first location
+
+        double lowestCandidate = Double.MAX_VALUE;
+        int[] arraySeam = null;
+
+        for (int i = 1; i < width(); i++) {
+            double energyValue = findVerticalSeamFrom(i).energy;
+            if (energyValue < lowestCandidate) {
+                lowestCandidate = energyValue;
+                arraySeam = findVerticalSeamFrom(i).seam;
+
+            }
+        }
+        verticalSeamsToRemoveList.add(arraySeam);
+        return arraySeam;
+    }
+
+    public class CalculateSeamEnergy {
+        double energy;
+        int[] seam;
+
+        public CalculateSeamEnergy(int[] seam) {
+            this.seam = seam;
+            this.energy = energySumOfSeam();
+        }
+
+        private double energySumOfSeam() {
+            double energyValue = 0;
+
+            for (int i = 0; i < seam.length; i++) {
+                // 3, 0 --> location of first vertex
+                energyValue += energyArray[verticalSeamArray[i]][i];
+                // 2, 1 --> location of second vertex
+
+
+            }
+            return energyValue;
+        }
+    }
+
+    public int[] findHorizontalSeam() {              // sequence of indices for horizontal seam
+
+
+        return null;
+    }
+
+    public void removeHorizontalSeam(int[] seam) {  // remove horizontal seam from current picture
+
+    }
+
+    public void removeVerticalSeam(int[] seam) {    // remove vertical seam from current picture
+        
+
+    }
+
+
+
+    /*---------- vertical seam removal map ---------------
+                    Goal to accomplish next (What's this things job?):
+                        To remove the seam
+                         Find the seam, add the seam to the ArrayList until removeSeam is called
+                         if (arrayList.size == 1)
+                            Create a new picture and move all pixels to the left of their current pos.
+                         else
+                            order the seams to ensure every spot is increasing.
+                            for length of arrayList
+                                Find the range of the pixels to be "saved" and moved to the left
+
+                                // Determine the last seam to the end of the picture using the below
+                                use arraylist.size() in (width() - arrayList.size())
+
+
+
+
+
+                    Process - pseudo code (What we'll need):
+                        ArrayList<int[]> verticalSeamsToRemoveList = new ArrayList<>();
+
+                          removeVerticalSeam(int[] seam) {
+                            if (verticalSeamsToRemoveList.size() == 1) {
+                                new Picture(width - 1, height())
+                                for (width - seamIndex) {
+                                    color = pic.getRGB(row+1,col)
+                                    pic.set(row,col,color)
+                                }
+
+                            } else {
+
+                                // Order the seams so they are always increasing at each column
+                                for (int i = 0; i < verticalSeamsToRemoveList.size(); i++) {
+                                        int[] newSeam0;
+                                        int[] newSeam1;
+
+                                        vertSeam1 = verticalSeamsToRemoveList.index(i);
+                                        // verticalSeamsToRemoveList.index(0);
+
+                                        vertSeam2 = verticalSeamsToRemoveList.index(i+1);
+                                        // verticalSeamsToRemoveList.index(1);
+
+                                        if (vertSeam1.index(i) > vertSeam2(i))
+                                }
+                            }
+                            pic.save();
+                          }
+
+
+
+
+                    Test Result Validation:
+
+     -------------------------------------
+
+      // Original idea
+                          Remove the seam
+                          Move RGB from the right of the seam into the space of the removed seam until the end
+                          Recalculate the energies along the seam
+                          ?When do we finish minimizing the picture via the seam? Perhaps the tests stop at a certain point.
+                          Save picture
+
+                          // Original idea
+                          for i of 0 till length take the seam and convert to picture location
+                             location on x axis = verticalSeamArray[i]
+                             colorValue = pic.getRGB(col,row)
+                             pic.set(row, col, colorValue) <-- dependent on if we can set value from getRGB here
+                               ^ Set where seem is
+                             pic.set(row, col + 1, colorValueFromRight)
+                             -- continue until end, set last pixel to null --
+                               (keep a counter to keep track of how many pixels to the right to go)
+
+                           for every element in the seamArray represented as i
+                              energyArray[verticalSeam[i]][i] = energy(verticalSeam[i],i)
+
+    */
+
+    //TODO: How do we remove the empty spaces on the right when done removing the seams?
+    //TODO: Only way I can think of is create a new array, resize it and add everything one by
+    //TODO: one but that doesn't seem right. https://tinyurl.com/seamremoval suggests it however.
+
 
     private int deltaHorizontal(int x, int y) {
         Color right = pic.get(x + 1, y);
@@ -181,68 +326,13 @@ public class SeamCarver {
         return deltaRed + deltaGreen + deltaBlue;
     }
 
-    public double energy(int x, int y) {               // energy of pixel at column x and row y
-
-        if (x == 0 || y == 0 || x == width() - 1 || y == height() - 1) {
-            return 1000;
-        }
-
-        return Math.sqrt(deltaHorizontal(x, y) + deltaVertical(x, y));
-    }
-
-
-    public int[] findVerticalSeam() {                // sequence of indices for vertical seam
-        // Find lowest energy on second row and use the row right above it as the first location
-
-        double lowestCandidate = Double.MAX_VALUE;
-        int[] arraySeam = null;
-
-        for (int i = 1; i < width()-1; i++) {
-            double energyValue = findVerticalSeamFrom(i).energy;
-            if (energyValue < lowestCandidate) {
-                lowestCandidate = energyValue;
-                arraySeam = findVerticalSeamFrom(i).seam;
-
-            }
-        }
-        return arraySeam;
-    }
-
-    public class SeamEnergy {
-        double energy;
-        int[] seam;
-    }
-
-    public int[] findHorizontalSeam() {              // sequence of indices for horizontal seam
-
-
-        return null;
-    }
-
-
-    public void removeHorizontalSeam(int[] seam) {  // remove horizontal seam from current picture
-
-    }
-
-    public void removeVerticalSeam(int[] seam) {    // remove vertical seam from current picture
-
-        // Shift all pixels that is to the right of the seam and move them left.
-        for (int col = seam[0]; col < energyArray.length- seam[0]; col++) {
-            for (int row = 0; row < height(); row++) {
-
-                double pixelSwap = energyArray[col + 1][row];
-                energyArray[col][row] = pixelSwap;
-            }
-        } // TODO: The above ^ doesn't take into account the new deltas that need to be calculated after the seem is removed.
-    }
-
     public Picture picture() {                              // current picture
 
         return new Picture(pic);
     }
 
     public static void main(String[] args) {
-        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/6x5.png");
+        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/3x4.png");
 
         SeamCarver seamCarver = new SeamCarver(picture);
 //        assert seamCarver.energy(0, 0) == 1000; // 3x4.png
@@ -252,7 +342,6 @@ public class SeamCarver {
 
         int[] verticalSeem = seamCarver.findVerticalSeam();
         seamCarver.removeVerticalSeam(verticalSeem);
-
 
 
     }
