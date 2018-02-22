@@ -1,6 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class SeamCarver {
@@ -36,6 +36,16 @@ public class SeamCarver {
 
 
     private SeamEnergy findVerticalSeamFrom(int x) {
+        /*
+        refactor
+        int y=0;
+        seam[y] = x;
+
+        for ( y=1; y<height(); y++ ) {
+            x = pick();
+            seam[y] = x;
+        }
+        */
 
         int y = 0;
         verticalSeamArray = new int[height()];
@@ -64,6 +74,8 @@ public class SeamCarver {
             lowerBelowLeft = energyArray[x - 1][y + 1];
         }
 
+        // ---------------------------------------------------------
+
         // lowerBelowRight is the lowest
         if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
             // Add the value of x to seamArray[0+1]
@@ -86,46 +98,47 @@ public class SeamCarver {
 
         // for loop and keep traversing the seam.
         // account for left/right cases
-//
-//        for (int i = 2; i < verticalSeamArray.length; i++) {
-//            int newX = verticalSeamArray[i - 1];
-//            int newY = y;
-//
-//            if (x != 0 && x != width() - 1) {
-//                lowerBelowLeft = energyArray[x - 1][y + 1];
-//                below = energyArray[x][y + 1];
-//                lowerBelowRight = energyArray[x + 1][y + 1];
-//            } else if (x == 0) {
-//                below = energyArray[x][y + 1];
-//                lowerBelowRight = energyArray[x + 1][y + 1];
-//            } else {
-//                below = energyArray[x][y + 1];
-//                lowerBelowRight = energyArray[x - 1][y + 1];
-//            }
-//
-//
-//
-//            // lowerBelowRight is the lowest
-//            if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
-//                verticalSeamArray[i] = newX + 1;
-//                newY++;
-//                continue;
-//            }
-//
-//            // below is lowest
-//            else if (below < lowerBelowLeft && below < lowerBelowRight) {
-//                verticalSeamArray[i] = newX;
-//                newY++;
-//                continue;
-//            }
-//
-//            // lowerBelowLeft is the lowest
-//            else {
-//                verticalSeamArray[i] = newX - 1;
-//                newY++;
-//                continue;
-//            }
-//        }
+
+
+        for (int i = 2; i < verticalSeamArray.length; i++) {
+            int newX = verticalSeamArray[i - 1];
+            int newY = y;
+
+            if (isNotOnBorderOfPicture(newX)) {
+                lowerBelowLeft = energyArray[newX - 1][y + 1];
+                below = energyArray[newX][y + 1];
+                lowerBelowRight = energyArray[newX + 1][y + 1];
+            } else if (newX == 0) {
+                below = energyArray[newX][y + 1];
+                lowerBelowRight = energyArray[newX + 1][y + 1];
+            } else {
+                below = energyArray[newX][y + 1];
+                lowerBelowRight = energyArray[newX - 1][y + 1];
+            }
+
+
+
+            // lowerBelowRight is the lowest
+            if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
+                verticalSeamArray[i] = newX + 1;
+                newY++;
+                continue;
+            }
+
+            // below is lowest
+            else if (below < lowerBelowLeft && below < lowerBelowRight) {
+                verticalSeamArray[i] = newX;
+                newY++;
+                continue;
+            }
+
+            // lowerBelowLeft is the lowest
+            else {
+                verticalSeamArray[i] = newX - 1;
+                newY++;
+                continue;
+            }
+        }
 
         SeamEnergy se = new SeamEnergy(verticalSeamArray);
 
@@ -171,7 +184,7 @@ public class SeamCarver {
         return arraySeam;
     }
 
-    public class SeamEnergy {
+    private class SeamEnergy {
         double energy;
         int[] seam;
 
@@ -273,7 +286,7 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/3x4.png");
+        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/6x5.png");
 
         SeamCarver seamCarver = new SeamCarver(picture);
 //        assert seamCarver.energy(0, 0) == 1000; // 3x4.png
@@ -283,7 +296,6 @@ public class SeamCarver {
 
         int[] verticalSeem = seamCarver.findVerticalSeam();
         seamCarver.removeVerticalSeam(verticalSeem);
-        seamCarver.pic.save("picTest.jpg");
 
     }
 }
