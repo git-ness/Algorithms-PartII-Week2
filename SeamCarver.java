@@ -204,11 +204,6 @@ public class SeamCarver {
         this.pic = newPic;
     }
 
-
-    //TODO: Since saving to a newpic doesn't work, try making a copy of a pic to get the same picture
-    //TODO: This will help make sure the process of moving all pixels to a new pic is valid
-
-
     private int deltaHorizontal(int x, int y) {
         Color right = pic.get(x + 1, y);
         Color left = pic.get(x - 1, y);
@@ -237,19 +232,33 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/6x5.png");
+        Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/7x10.png");
         SeamCarver seamCarver = new SeamCarver(picture);
 
         int[] verticalSeem = seamCarver.findVerticalSeam();
 
         int placeholder = 0;
 
-        // 6x5 array
-        assert (verticalSeem[0] == 3) || (verticalSeem[0] == 4) || (verticalSeem[0] == 5);
-        assert verticalSeem[1] == 4;
-        assert verticalSeem[2] == 3;
-        assert verticalSeem[3] == 2;
-        assert (verticalSeem[4] == 1) || (verticalSeem[4] == 2) || (verticalSeem[4] == 3);
+        // 6x5.jpg
+//        assert (verticalSeem[0] == 3) || (verticalSeem[0] == 4) || (verticalSeem[0] == 5);
+//        assert verticalSeem[1] == 4;
+//        assert verticalSeem[2] == 3;
+//        assert verticalSeem[3] == 2;
+//        assert (verticalSeem[4] == 1) || (verticalSeem[4] == 2) || (verticalSeem[4] == 3);
+//
+
+        // 7x10.jpg
+//        assert (verticalSeem[0] == 2) || (verticalSeem[0] == 3) || (verticalSeem[0] == 4);
+//        assert verticalSeem[1] == 3;
+//        assert verticalSeem[2] == 4;
+//        assert verticalSeem[3] == 3;
+//        assert verticalSeem[4] == 4;
+//        assert verticalSeem[5] == 3;
+//        assert verticalSeem[6] == 4;
+//        assert verticalSeem[7] == 3;
+//        assert verticalSeem[8] == 4;
+//        assert (verticalSeem[9] == 3) || (verticalSeem[9] == 4) || (verticalSeem[9] == 5);
+
 
 
 
