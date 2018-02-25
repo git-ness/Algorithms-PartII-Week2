@@ -48,7 +48,7 @@ public class SeamCarver {
         }
 
         // If on the left border of picture
-        else if (x == 0 && y != height()-1) {
+        else if (x == 0 && y != height() - 1) {
             below = getValFromEnergyArray(x, y + 1);
             lowerBelowRight = getValFromEnergyArray(x + 1, y + 1);
         }
@@ -86,7 +86,7 @@ public class SeamCarver {
         seam[y] = x;
 
         for (y = 1; y < height(); y++) {
-            x = pick(x , y);
+            x = pick(x, y);
             seam[y] = x;
         }
         this.verticalSeamArray = seam;
@@ -236,6 +236,7 @@ public class SeamCarver {
         SeamCarver seamCarver = new SeamCarver(picture);
 
         int[] verticalSeem = seamCarver.findVerticalSeam();
+        int[] horiz = seamCarver.findHorizontalSeam();
 
         int placeholder = 0;
 
@@ -246,6 +247,15 @@ public class SeamCarver {
 //        assert verticalSeem[3] == 2;
 //        assert (verticalSeem[4] == 1) || (verticalSeem[4] == 2) || (verticalSeem[4] == 3);
 //
+
+        // 6x5.jpg - horizontal { 1||2||3, 2, 1, 2, 1, 2 }
+//        assert (horizontalSeam[0] == 1) || (verticalSeem[0] == 2) || (verticalSeem[0] == 3);
+//        assert horizontalSeam[1] == 2;
+//        assert horizontalSeam[2] == 1;
+//        assert horizontalSeam[3] == 2;
+//        assert horizontalSeam[4] == 1;
+//        assert (horizontalSeam[5] == 1) || (verticalSeem[4] == 2) || (verticalSeem[4] == 3);
+
 
         // 7x10.jpg
 //        assert (verticalSeem[0] == 2) || (verticalSeem[0] == 3) || (verticalSeem[0] == 4);
@@ -258,9 +268,6 @@ public class SeamCarver {
 //        assert verticalSeem[7] == 3;
 //        assert verticalSeem[8] == 4;
 //        assert (verticalSeem[9] == 3) || (verticalSeem[9] == 4) || (verticalSeem[9] == 5);
-
-
-
 
 
         seamCarver.removeVerticalSeam(verticalSeem);
