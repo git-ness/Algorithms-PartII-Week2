@@ -36,16 +36,6 @@ public class SeamCarver {
 
 
     private SeamEnergy findVerticalSeamFrom(int x) {
-        /*
-        refactor
-        int y=0;
-        seam[y] = x;
-
-        for ( y=1; y<height(); y++ ) {
-            x = pick();
-            seam[y] = x;
-        }
-        */
 
         int y = 0;
         verticalSeamArray = new int[height()];
