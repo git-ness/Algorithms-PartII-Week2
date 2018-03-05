@@ -130,6 +130,8 @@ public class SeamCarver {
 
             }
         }
+
+        System.out.println("Lowest candidate: " + lowestCandidate);
         verticalSeamsToRemoveList.add(arraySeam);
         return arraySeam;
     }
@@ -235,8 +237,9 @@ public class SeamCarver {
         Picture picture = new Picture("/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/7x10.png");
         SeamCarver seamCarver = new SeamCarver(picture);
 
+
         int[] verticalSeem = seamCarver.findVerticalSeam();
-        int[] horiz = seamCarver.findHorizontalSeam();
+//        int[] horiz = seamCarver.findHorizontalSeam();
 
         int placeholder = 0;
 
@@ -270,7 +273,7 @@ public class SeamCarver {
 //        assert (verticalSeem[9] == 3) || (verticalSeem[9] == 4) || (verticalSeem[9] == 5);
 
 
-        seamCarver.removeVerticalSeam(verticalSeem);
+//        seamCarver.removeVerticalSeam(verticalSeem);
 
     }
 }
