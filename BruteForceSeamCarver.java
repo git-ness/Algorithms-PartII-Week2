@@ -35,15 +35,36 @@ public class BruteForceSeamCarver {
 
     private SeamAndEnergy createSeamAndEnergy(int x, int y) {
 
-        if (x!= 0 && x != width()-1) {
+        if (x != 0 && x != width() - 1) {
+        // Create seam for that x,y position.
 
 
 
-            SeamAndEnergy seamAndEnergy = new SeamAndEnergy(); // String representation of seam and energy
-            seamAndEnergiesList.add(new SeamAndEnergy(createSeamAndEnergy(x, y)));
+//            SeamAndEnergy seamAndEnergy = new SeamAndEnergy(); // String representation of seam and energy
+//            seamAndEnergiesList.add(new SeamAndEnergy(createSeamAndEnergy(x, y)));
+//        }
+//
+//        else {seamAndEnergiesList.add(new SeamAndEnergy())}
+
+        /*---------- Memory Map ---------------
+                    Goal to accomplish next (What's this things job?):
+                          Return one
+
+                    Process - pseudo code (What we'll need):
+                          HashSet<Integer> nounIdSet = nounToSynsetIdMap.get(noun);
+                          nounIdSet.add(synsetId);
+
+                          HashSet<Integer> nounsInSynset = synsetIdToNounMap.get(noun);
+                          nounsInSynset.add(noun);
+
+                    Test Result Validation:
+                          nounToSynsetIdMap.get("appearsTwice") returns 1,3
+                          nounIdSet.get("one") returns 1,2
+*/
+
+
         }
-
-        else {seamAndEnergiesList.add(new SeamAndEnergy())}
+        return null;
     }
 
 
@@ -60,7 +81,6 @@ public class BruteForceSeamCarver {
 
                 // 3x to create a new Seam for each unexplored seam.
                 seamAndEnergiesList.add(new SeamAndEnergy(Integer.toString(x)));
-
 
 
             }
