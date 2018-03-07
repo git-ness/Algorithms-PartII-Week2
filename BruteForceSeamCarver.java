@@ -85,7 +85,12 @@ public class BruteForceSeamCarver {
                 // Checks if the string array representation exists. If it does, modify and append the new values.
                 for (SeamAndEnergy seamObject : seamAndEnergiesList) {
                     if (seamObject.compareTo(seamAndEnergiesList.get(seamAndEnergiesList.indexOf(stringBuilder))) == 0) {
+                        SeamAndEnergy seamEnergy = seamAndEnergiesList.get(seamAndEnergiesList.indexOf(stringBuilder));
+                        String seam = seamEnergy.seamString;
 
+
+                        seamEnergy.seamString = (stringBuilder + seam); //TODO Create a setter to change the value of the energy
+                        seamAndEnergiesList.set(seamAndEnergiesList.indexOf(seamAndEnergiesList.indexOf(stringBuilder)), seamEnergy );
 
                     } else {
                         seamAndEnergiesList.add(new SeamAndEnergy(Integer.toString(x)));
@@ -174,6 +179,11 @@ public class BruteForceSeamCarver {
                 this.energy += energyArray[seamInt][y];
                 y++;
             }
+        }
+
+        public void setString(String seamString) {
+            this.seamString = seamString;
+            addEnergy();
         }
 
         private void addEnergy() {

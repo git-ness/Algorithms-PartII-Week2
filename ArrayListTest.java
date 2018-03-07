@@ -72,6 +72,8 @@ public class ArrayListTest {
             addStringEnergy();
         }
 
+
+
         public String getSeamValue(String stringParam) {
             return seamString;
         }
