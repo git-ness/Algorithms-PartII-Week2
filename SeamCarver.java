@@ -228,6 +228,10 @@ public class SeamCarver {
         return deltaRed + deltaGreen + deltaBlue;
     }
 
+    public double lowestEnergyCalculation(int[] lowestSeam) {
+
+    }
+
     public Picture picture() {                              // current picture
 
         return new Picture(pic);
@@ -239,6 +243,7 @@ public class SeamCarver {
 
 
         int[] verticalSeem = seamCarver.findVerticalSeam();
+        seamCarver
 //        int[] horiz = seamCarver.findHorizontalSeam();
 
         int placeholder = 0;
@@ -267,11 +272,13 @@ public class SeamCarver {
 //        assert verticalSeem[3] == 3;
 //        assert verticalSeem[4] == 4;
 //        assert verticalSeem[5] == 3;
-//        assert verticalSeem[6] == 4;
-//        assert verticalSeem[7] == 3;
-//        assert verticalSeem[8] == 4;
-//        assert (verticalSeem[9] == 3) || (verticalSeem[9] == 4) || (verticalSeem[9] == 5);
+//        assert verticalSeem[6] == 3;
+//        assert verticalSeem[7] == 2;
+//        assert verticalSeem[8] == 2;
+//        assert (verticalSeem[9] == 1) || (verticalSeem[9] == 2) || (verticalSeem[9] == 3);
 
+//        Energy: 3443.1978197452986
+//        2  3  4  3  4  3  3  2  2  1
 
 //        seamCarver.removeVerticalSeam(verticalSeem);
 
