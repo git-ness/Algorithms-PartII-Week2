@@ -107,7 +107,7 @@ public class Brute {
         }
 
 
-        ArrayList<Double> energiesList = new ArrayList<>();
+//        ArrayList<Double> energiesList = new ArrayList<>();
         double lowestEnergy = Double.POSITIVE_INFINITY;
         int[] lowestSeam = new int[brute.height()];
 
@@ -119,7 +119,7 @@ public class Brute {
                 energyOfSeam += brute.energy(seam[i], i);
             }
 
-            energiesList.add(energyOfSeam);
+//            energiesList.add(energyOfSeam);
             if (lowestEnergy > energyOfSeam) {
                 lowestEnergy = energyOfSeam;
                 lowestSeam = seam;

@@ -34,29 +34,33 @@ public class SeamCarver {
         return x != 0 && x != width() - 1;
     }
 
+    /**
+     * Picks the lowest of the three below the current position where they are located
+     * at the bottom left, bottom or the bottom right.
+     *
+     * @param x row position within the 2d energyArray
+     * @param y column position
+     * @return int that represents the x position of the row below the current starting point.
+     * Return -1 if the lower left and lowerleft below the lower left-location-energy is less than the others.
+     * Return -1 if the lower right and lowerright below the lower right-location-energy is less than the others.
+     */
     private int pick(int x, int y) {
 
         double lowerBelowLeft = Double.POSITIVE_INFINITY;
-        double below = Double.POSITIVE_INFINITY;
         double lowerBelowRight = Double.POSITIVE_INFINITY;
 
-        if (isNotOnBorderOfPicture(x)) {
-            lowerBelowLeft = getValFromEnergyArray(x - 1, y);
-            below = getValFromEnergyArray(x, y);
-            lowerBelowRight = getValFromEnergyArray(x + 1, y);
-
+        if (y == height()-1) {
+            return -1;
         }
 
-        // If on the left border of picture
-        else if (x == 0 && y != height() - 1) {
-            below = getValFromEnergyArray(x, y + 1);
+        if (x != 0) {
+            lowerBelowLeft = getValFromEnergyArray(x - 1, y + 1);
+        }
+
+        double below = getValFromEnergyArray(x, y + 1);
+
+        if (x != width()-1) {
             lowerBelowRight = getValFromEnergyArray(x + 1, y + 1);
-        }
-
-        // If on the right border of picture.
-        else {
-            below = energyArray[x][y + 1];
-            lowerBelowLeft = energyArray[x - 1][y + 1];
         }
 
         // ---------------------------------------------------------
@@ -68,7 +72,7 @@ public class SeamCarver {
         }
 
         // below is the lowest
-        else if (below < lowerBelowLeft && below < lowerBelowLeft) {
+        else if (below < lowerBelowLeft && below < lowerBelowRight) {
             return x;
         }
 
@@ -81,12 +85,22 @@ public class SeamCarver {
 
     private SeamEnergy findVerticalSeamFrom(int x) {
 
+        // Energy: 3443.1978197452986
+        // 2  3  4  3  4  3  3  2  2  1
+
         int y = 0;
         int[] seam = new int[height()];
         seam[y] = x;
 
         for (y = 1; y < height(); y++) {
             x = pick(x, y);
+
+            if (x == -2 || x == -1) {
+                // Set x to far right or far left, then set x again with y increased by 1.
+
+                // return;
+            }
+
             seam[y] = x;
         }
         this.verticalSeamArray = seam;
@@ -121,8 +135,10 @@ public class SeamCarver {
         double lowestCandidate = Double.MAX_VALUE;
         int[] arraySeam = null;
 
+        // Energy: 3443.1978197452986
+        // 2  3  4  3  4  3  3  2  2  1
+
         for (int i = 1; i < width(); i++) {
-            int placehold = 0;
             double energyValue = findVerticalSeamFrom(i).energy;
             if (energyValue < lowestCandidate) {
                 lowestCandidate = energyValue;
@@ -156,21 +172,8 @@ public class SeamCarver {
             }
             return energyValue;
         }
-    }
 
-//    private void processVerticalSeams() {
-//
-//        // If a seam "crosses" a different seam, this will reorder the seam to ensure they no longer "cross" over each other.
-//        for (int row = 0; row < height(); row++) {
-//            for (int i = 0; i < verticalSeamsToRemoveList.size(); i++) {
-//                if (verticalSeamsToRemoveList.get(0)[i] > verticalSeamsToRemoveList.get(verticalSeamsToRemoveList.size() - 1 - i)[i]) {
-//                    int seamValue = verticalSeamsToRemoveList.get(0)[i];
-//                    verticalSeamsToRemoveList.get(0)[i] = verticalSeamsToRemoveList.get(verticalSeamsToRemoveList.size() - 1 - i)[i];
-//                    verticalSeamsToRemoveList.get(verticalSeamsToRemoveList.size() - 1 - i)[i] = seamValue;
-//                }
-//            }
-//        }
-//    }
+    }
 
     public int[] findHorizontalSeam() {              // sequence of indices for horizontal seam
 
@@ -228,9 +231,6 @@ public class SeamCarver {
         return deltaRed + deltaGreen + deltaBlue;
     }
 
-    public double lowestEnergyCalculation(int[] lowestSeam) {
-
-    }
 
     public Picture picture() {                              // current picture
 
@@ -242,11 +242,12 @@ public class SeamCarver {
         SeamCarver seamCarver = new SeamCarver(picture);
 
 
-        int[] verticalSeem = seamCarver.findVerticalSeam();
-        seamCarver
+//        SeamEnergy energy = seamCarver.findVerticalSeamFrom(2);
+        int value = seamCarver.pick(2, 0);
+        int placeholder = 0;
+
 //        int[] horiz = seamCarver.findHorizontalSeam();
 
-        int placeholder = 0;
 
         // 6x5.jpg
 //        assert (verticalSeem[0] == 3) || (verticalSeem[0] == 4) || (verticalSeem[0] == 5);
@@ -280,7 +281,15 @@ public class SeamCarver {
 //        Energy: 3443.1978197452986
 //        2  3  4  3  4  3  3  2  2  1
 
+
+        //      8,6   8,7  7,8
+
 //        seamCarver.removeVerticalSeam(verticalSeem);
+
+
+        // Take three routes, see if any of those three have the lowest on either end. Calculate
+        // the lowest energy of all of them as they go along. They will evaluated compared to each other.
+
 
     }
 }
