@@ -48,22 +48,68 @@ public class SeamCarver {
 
         double lowerBelowLeft = Double.POSITIVE_INFINITY;
         double lowerBelowRight = Double.POSITIVE_INFINITY;
+        double below = getValFromEnergyArray(x, y + 1);
 
-        if (y == height()-1) {
+        if (y == height() - 1) {
             return -1;
+        }
+
+        // ---------------------------------------------------------
+        // Check to see if range for two rows below are valid. If not, only look one row below instead of two rows below.
+        if (!(x - 2 < 0) || !(x + 2 > width() - 1)) {
+            double lowestSubEnergyFromNegOneToZero = Double.POSITIVE_INFINITY;
+            double lowestSubEnergyFromOneToTwo = Double.POSITIVE_INFINITY;
+            int firstCandidate = -99;
+            int secondCandidate = -100;
+
+            // Using the for loop, check energy for below nodes x - 1 to x, adding energies for the three nodes below them.
+            for (int i = -1; i < 1; i++) {
+                for (int j = -2; j < 1; j++) {
+
+                    double energyCandidate = getValFromEnergyArray(x + i, y + 1)
+                            + getValFromEnergyArray(x + j, y + 2);
+
+                    if (energyCandidate < lowestSubEnergyFromNegOneToZero) {
+                        lowestSubEnergyFromNegOneToZero = energyCandidate;
+                        firstCandidate = i;
+                    } else {
+                    }
+                }
+            }
+
+            // Disconnect and perform this in two parts so all seams are connected,
+            // otherwise energies that are not "connected" will be calculated
+            for (int i = 1; i < 2; i++) {
+                for (int j = -2; j < 3; j++) {
+
+                    double energyCandidate = getValFromEnergyArray(x + i, y + 1)
+                            + getValFromEnergyArray(x + j, y + 2);
+
+                    if (energyCandidate < lowestSubEnergyFromOneToTwo) {
+                        lowestSubEnergyFromOneToTwo = energyCandidate;
+                        secondCandidate = i;
+                    } else {
+                    }
+                } //TODO: Test to ensure that if x below is the lowest energy, that it'll be choosen appropriately
+            }
+
+
+            if (lowestSubEnergyFromNegOneToZero < lowestSubEnergyFromOneToTwo) {
+                return x + firstCandidate;
+            }
+
+            if (lowestSubEnergyFromNegOneToZero > lowestSubEnergyFromOneToTwo) {
+                return x + secondCandidate;
+            }
         }
 
         if (x != 0) {
             lowerBelowLeft = getValFromEnergyArray(x - 1, y + 1);
         }
 
-        double below = getValFromEnergyArray(x, y + 1);
-
-        if (x != width()-1) {
+        if (x != width() - 1) {
             lowerBelowRight = getValFromEnergyArray(x + 1, y + 1);
         }
-
-        // ---------------------------------------------------------
 
         // lowerBelowRight is the lowest
         if (lowerBelowRight < below && lowerBelowRight < lowerBelowLeft) {
