@@ -289,6 +289,13 @@ public class SeamCarver {
 
 
 //        SeamEnergy energy = seamCarver.findVerticalSeamFrom(2);
+//        seamCarver.energyArray[3][2] = 2;
+
+
+        String[] arguments = new String[] {"/Users/elsa/learning/Algorithms-Part2-seamcarving/seam/7x10.png"};
+        PrintEnergy printEnergy = new PrintEnergy();
+
+
         int value = seamCarver.pick(2, 0);
         int placeholder = 0;
 
